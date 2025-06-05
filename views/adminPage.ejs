@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>관리자 페이지</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/stylesheets/main.css"/>
+  <link rel="stylesheet" href="/stylesheets/adminPage.css"/>
+  <script>
+    const userid = "<%= session.userid %>";
+
+    function mngMember() {
+      if (userid !== 'admin') {
+        alert('접근 권한이 없습니다.');
+      } else {
+        location.href = "/money/userlist";
+      }
+    }
+
+    function mngPost() {
+      if (userid !== 'admin') {
+        alert('접근 권한이 없습니다.');
+      } else {
+        location.href="/money/adminPostPage";
+      }
+    }
+  </script>
+</head>
+<body>
+  <%- include('nav.ejs') %>
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2>관리자 페이지</h2>
+      <button class="admin-btn" onclick="mngMember()">회원 관리</button>
+      <button class="admin-btn" onclick="mngPost()">게시글 관리</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

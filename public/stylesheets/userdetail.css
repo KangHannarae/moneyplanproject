@@ -1,0 +1,100 @@
+    body {
+      background-color: #fffde7;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #388e3c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+
+    td {
+      padding: 12px;
+      vertical-align: middle;
+    }
+
+    td:first-child {
+      width: 30%;
+      font-weight: bold;
+      background-color: #fdd835;
+      color: #333;
+      border-radius: 8px 0 0 8px;
+    }
+
+    td:last-child input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fffde7;
+    }
+
+    tr:hover {
+      background-color: #f0f4c3;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-custom {
+      background-color: #66bb6a;
+      color: white;
+      font-weight: bold;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-custom:hover {
+      background-color: #388e3c;
+    }
+
+    .btn-warning {
+      background-color: #fdd835;
+      color: #333;
+    }
+
+    .btn-warning:hover {
+      background-color: #fbc02d;
+    }
+
+    .btn-danger {
+      background-color: #e57373;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background-color: #c62828;
+    }

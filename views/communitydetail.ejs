@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/stylesheets/communitydetail.css"/>
+  <link rel="stylesheet" href="/stylesheets/main.css"/>
+  <title>머니플래너</title>
+  <script>
+    function home() {
+      location.href = "/money/post";
+    }
+    function del(post_id) {
+      if (confirm('삭제하시겠습니까?')) {
+        location.href = '/money/post/delete/' + post_id;
+      }
+    }
+    function updateMsg() {
+      alert("수정되었습니다.");
+    }
+    function comment_del(comment_id, post_id) {
+      if (confirm('삭제하시겠습니까?')) {
+        location.href = `/money/post/reply_delete/${comment_id}/${post_id}`;
+      }
+    }
+    function reply_del(reply_id, post_id) {
+      if (confirm('삭제하시겠습니까?')) {
+        location.href = `/money/post/comment_reply_delete/${reply_id}/${post_id}`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <%- include('nav.ejs')%>
+
+  <div class="container-custom">
+    <div class="card-custom">
+      <h2><%= session.userid === row.writer ? '게시글 보기 및 수정' : '게시글 보기' %></h2>
+
+      <form method="post" name="form1" enctype="multipart/form-data" action="/money/post/update/<%=row.post_id%>">
+        <div class="mb-3">
+          <label class="form-label">조회수</label>
+          <input class="form-control" value="<%=row.hit%>" readonly />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">이름</label>
+          <input name="writer" class="form-control" value="<%=row.writer%>" readonly />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">카테고리</label>
+          <input type="hidden" name="category" value="<%=row.category%>">
+          <% const categoryMap = { free: '자유게시판', diary: '나만의소비팁', goal: '목표인증' }; %>
+          <input class="form-control" value="<%= categoryMap[row.category] || '알 수 없음' %>" readonly />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">제목</label>
+          <input name="title" class="form-control" value="<%= row.title %>" <%= session.userid === row.writer ? '' : 'readonly' %> />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">내용</label>
+          <textarea name="content" class="form-control" rows="5" <%= session.userid === row.writer ? '' : 'readonly' %>><%=row.content%></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">첨부파일</label><br>
+
+          <% if(row.filesize > 0) { %>
+            <% if(row.filename.indexOf('jpg')!=-1 || row.filename.indexOf('png')!=-1 ){ %>
+              <img src="/money/post/download/<%=row.post_id%>" width="100px" height="100px"><br>
+            <% } %>
+            <a href="/money/post/download/<%=row.post_id%>"><%=row.filename%></a> (<%=row.filesize%> bytes)<br>
+          <% } else { %>
+            <p>첨부된 파일이 없습니다.</p>
+          <% } %>
+
+          <% if(session.userid === row.writer) { %>
+            <input type="file" name="file" class="form-control mt-2" />
+          <% } %>
+          <input type="hidden" name="old_filename" value="<%=row.filename%>" />
+          <p style="color:rgb(105, 105, 105); text-align: right; margin-top: 10px;">작성일자 : <%=row.post_date%></p>
+        </div>
+
+        <div class="text-center mt-4">
+          <button type="button" onclick="home()" class="btn btn-secondary">목록</button>
+          <% if(session.userid === row.writer || session.userid === 'admin') { %>
+            <input type="submit" class="btn btn-primary" onclick="updateMsg()" value="수정">
+            <button type="button" onclick="del('<%=row.post_id%>')" class="btn btn-danger">삭제</button>
+          <% } %>
+        </div>
+      </form>
+      <!-- 즐겨찾기 폼 -->
+      <form id="favForm">
+        <input type="hidden" name="userid" value="<%= session.userid %>">
+        <input type="hidden" name="post_id" value="<%= row.post_id %>">
+        <button type="button" id="favBtn" class="fav-btn">★</button>
+      </form>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+          const favBtn = document.getElementById('favBtn');
+          const userid = document.querySelector('input[name="userid"]').value;
+          const post_id = document.querySelector('input[name="post_id"]').value;
+
+          let favId = null; // 즐겨찾기 ID 저장용
+
+          // 1. 즐겨찾기 여부 확인
+          try {
+            const res = await fetch(`/money/post/favorite/check?userid=${userid}&post_id=${post_id}`);
+            const result = await res.json();
+
+            if (result.favorited) {
+              favBtn.classList.add('active');
+              favId = result.fav_id; // 서버가 fav_id를 리턴해야 함
+            }
+          } catch (err) {
+            console.error('즐겨찾기 확인 오류:', err);
+          }
+
+          // 2. 클릭 시 토글
+          favBtn.addEventListener('click', async () => {
+            try {
+              if (favBtn.classList.contains('active')) {
+                // 즐겨찾기 삭제
+                const response = await fetch(`/money/post/favorite/${favId}`, {
+                  method: 'DELETE',
+                });
+
+                const result = await response.json();
+                alert(result.message);
+                favBtn.classList.remove('active');
+                favId = null;
+              } else {
+                // 즐겨찾기 추가
+                const response = await fetch('/money/post/favorite', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ userid, post_id }),
+                });
+
+                const result = await response.json();
+                alert(result.message);
+                favBtn.classList.add('active');
+                favId = result.fav_id; // 새로 추가된 fav_id 저장
+              }
+            } catch (err) {
+              alert("오류가 발생했습니다.");
+              console.error(err);
+            }
+          });
+        });
+      </script>
+      <hr class="my-5" />
+
+    <h4>댓글 작성</h4>
+    <form method="post" action="/money/post/reply_insert" class="mb-4">
+      <div class="mb-2">
+        <textarea name="content" class="form-control" rows="4" placeholder="댓글을 작성하세요"></textarea>
+      </div>
+      <input type="hidden" name="writer" value="<%=session.username%>" />
+      <input type="hidden" name="post_id" value="<%=row.post_id%>" />
+      <button type="submit" class="btn btn-outline-success" <%= !session.userid ? 'disabled' : '' %>>
+        댓글쓰기
+      </button>
+    </form>
+
+    <h5 class="mb-3">댓글 목록</h5>
+    <div class="list-group">
+      <% comment_list.forEach(comment => { %>
+        <div class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong><%= comment.writer %></strong>
+            <span class="text-muted small"><%= comment.comment_date %></span>
+          </div>
+
+          <% if(session.username === comment.writer || session.userid === 'admin') { %>
+            <form method="post" action="/money/post/reply_update/<%=comment.comment_id%>" class="mt-2">
+              <input type="text" class="form-control my-2" name="content" value="<%=comment.content%>">
+              <input type="hidden" name="writer" value="<%=comment.writer%>">
+              <input type="hidden" name="comment_id" value="<%=comment.comment_id%>">
+              <input type="hidden" name="post_id" value="<%=row.post_id%>">
+              <div class="comment-actions">
+                <button type="submit" class="btn btn-primary btn-sm">수정</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="comment_del('<%=comment.comment_id%>', '<%=row.post_id%>')">삭제</button>
+              </div>
+            </form>
+          <% } else { %>
+            <p class="mt-2 mb-1"><%= comment.content %></p>
+          <% } %>
+
+          <div class="text-end">
+            <button class="btn btn-link btn-sm text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<%= comment.comment_id %>" aria-expanded="false" aria-controls="collapse-<%= comment.comment_id %>">
+              답글 달기
+            </button>
+          </div>
+
+          <div class="collapse" id="collapse-<%= comment.comment_id %>">
+            <div class="card card-body bg-light mt-2">
+              <form method="post" action="/money/post/comment_reply_insert">
+                <input type="hidden" name="comment_id" value="<%= comment.comment_id %>">
+                <input type="hidden" name="writer" value="<%= session.username %>">
+                <input type="hidden" name="post_id" value="<%= row.post_id %>">
+                <textarea name="content" class="form-control" rows="3" placeholder="답글을 작성하세요"></textarea>
+                <button type="submit" class="btn btn-outline-success btn-sm mt-2" <%= !session.userid ? 'disabled' : '' %>>답글쓰기</button>
+              </form>
+            </div>
+          </div>
+
+        <!-- 답글 목록 -->
+        <div class="mt-3 ms-4">
+          <% if(comment.replies && comment.replies.length > 0) { %>
+            <% comment.replies.forEach(reply => { %>
+              <div class="border rounded p-2 mb-2 bg-light">
+                <div class="mb-1 d-flex justify-content-between">
+                  <div>
+                    <strong><%= reply.writer %></strong>
+                    <span class="text-muted small ms-2"><%= reply.reply_date %></span>
+                  </div>
+                </div>
+                <% if (session.username === reply.writer) { %>
+                  <form method="post" action="/money/post/comment_reply_update" class="mt-1">
+                    <input type="hidden" name="reply_id" value="<%= reply.reply_id %>">
+                    <input type="hidden" name="comment_id" value="<%= comment.comment_id %>">
+                    <input type="hidden" name="post_id" value="<%= row.post_id %>">
+                    <input type="hidden" name="writer" value="<%= session.username %>">
+
+                    <div class="input-group input-group-sm mb-2">
+                      <input type="text" name="content" class="form-control" value="<%= reply.content %>">
+                    </div>
+                    <div class="text-end">
+                      <button type="submit" class="btn btn-primary btn-sm">수정</button>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="reply_del('<%= reply.reply_id %>', '<%= row.post_id %>')">삭제</button>
+                    </div>
+                  </form>
+                <% } else { %>
+                  <div class="mb-1">
+                    <p class="mb-0"><%= reply.content %></p>
+                  </div>
+                <% } %>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+        </div>
+      <% }) %>
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

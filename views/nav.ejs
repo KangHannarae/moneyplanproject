@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-lg bg-light">
+<div class="container">
+  <a class="navbar-brand" href="/money/main">
+    <img src="/images/logo.PNG" alt="머니플래너 로고" width="60px"/>
+    머니플래너
+  </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check1()">가계부</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check2()">소비메모</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check3()">커뮤니티</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check4()">마이페이지</a></li>
+      <% if(session.userid && session.userid !== "") { %>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="logout()">
+            <p class="text-danger">로그아웃</p>
+          </a>
+        </li>
+      <% } else { %>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onclick="login()">
+            <p class="text-success">로그인</p>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+</nav>
+<script>
+  let scriptNickname = "<%= session && session.userid ? session.userid : '' %>";
+  console.log("Nickname in script: " + scriptNickname);
+
+  function check1(){ //가계부
+    if(scriptNickname !== ""){ 
+      location.href='/money/moneylist';
+    } else { 
+      alert("로그인이 필요한 서비스입니다.");
+    }
+  }
+  function check2(){ //소비메모
+    if(scriptNickname !== ""){ 
+      location.href='/money/diarylist';
+    } else { 
+      alert("로그인이 필요한 서비스입니다.");
+    }		
+  }
+  function check3(){ //커뮤니티
+    if(scriptNickname !== ""){ 
+      location.href='/money/post';
+    } else { 
+      alert("로그인이 필요한 서비스입니다.");
+    }		
+  }
+  function check4() { //마이페이지
+    if(scriptNickname !== ""){ 
+      location.href='/money/mypage %>';
+    } else { 
+      alert("로그인이 필요한 서비스입니다.");
+    }		
+  }
+  function login() {
+    location.href='/money/login';
+  }
+  function logout() {
+    location.href='/money/logout';
+  }
+</script>
+

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>게시글 목록</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/adminPostMng.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <script>
+    function del(post_id) {
+      if (confirm('삭제하시겠습니까?')) {
+        location.href = '/money/adminPostPage/delete/' + post_id;
+      }
+    }
+  </script>
+</head>
+<body>
+<%- include('nav.ejs') %>
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2>게시글 목록</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>작성자</th>
+            <th>글제목</th>
+            <th>작성일</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (items && items.length > 0) { %>
+            <% items.forEach(item => { %>
+              <tr>
+                <td><%= item.writer %></td>
+                <td>
+                  <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
+                </td>
+                <td><%= item.post_date %></td>
+                <td>
+                  <button class="delete-btn" onclick="del('<%= item.post_id %>');">삭제</button>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="4">게시글이 없습니다.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

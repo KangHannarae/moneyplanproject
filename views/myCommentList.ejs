@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>머니플래너</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/myCommentList.css">
+</head>
+<body>
+<%- include('nav.ejs', { session: session }) %>
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2>작성한 댓글 목록</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>댓글 내용</th>
+            <th>게시글 제목</th>
+            <th>작성일</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% comments.forEach(comment => { %>
+            <tr>
+              <td class="comment-content"><%= comment.content %></td>
+              <td>
+                <a class="post-link" href="/money/post/communitydetail/<%= comment.post_id %>">
+                  <%= comment.title %>
+                </a>
+              </td>
+              <td class="date">
+                <%= new Date(comment.comment_date).toLocaleDateString() %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center mt-4">
+        <button onclick="location.href='/money/mypage'" class="btn btn-outline-secondary">뒤로</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+    body {
+      background-color: #fffde7;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container-custom {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .card-custom {
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    h2, h4, h5 {
+      text-align: center;
+      color: #388e3c;
+      margin-bottom: 30px;
+    }
+
+    .form-label {
+      font-weight: bold;
+      color: #333;
+    }
+
+    input[readonly], textarea[readonly] {
+      background-color: #f9fbe7 !important;
+    }
+
+    .btn-primary {
+      background-color: #66bb6a;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #388e3c;
+    }
+
+    .btn-danger {
+      background-color: #fdd835;
+      color: #333;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #fbc02d;
+    }
+
+    .btn-outline-primary {
+      color: #388e3c;
+      border-color: #66bb6a;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #66bb6a;
+      color: white;
+    }
+
+    .list-group-item {
+      background-color: #ffffff;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 15px;
+    }
+
+    .list-group-item:hover {
+      background-color: #f0f4c3;
+    }
+
+    button {
+      border-radius: 8px !important;
+    }
+
+    .comment-actions button {
+      margin-right: 5px;
+    }
+
+    .fav-btn {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #ccc; /* 기본 회색 별 */
+      transition: color 0.3s ease;
+    }
+
+  .fav-btn:hover {
+    color: gold; /* 마우스 올리면 황금색 */
+  }
+  
+  .fav-btn.active {
+    color: gold; /* 즐겨찾기 된 상태 */
+    text-shadow: 0 0 5px gold;
+  }
+

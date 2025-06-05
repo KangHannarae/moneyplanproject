@@ -1,0 +1,29 @@
+        body {
+            background-color: #fff8dc !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .join-wrapper {
+            display: flex;
+            justify-content: center;
+            /* align-items: center; */
+            height: calc(100vh - 70px); /* nav 높이 고려 */
+            padding: 20px;
+        }
+
+        .join-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            height: 880px;
+        }
+
+        .btn-box {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }

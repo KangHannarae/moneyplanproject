@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>머니플래너 알림</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/popup.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script>
+    $(function() {
+      $("#nopopup").click(function() {
+        var val = this.checked ? "N" : "Y";
+        setCookie("showCookies", val, 7);
+      });
+      $("#btnClose").click(function() {
+        window.close();
+      });
+    });
+    function setCookie(cname, cvalue, days) {
+      var d = new Date();
+      d.setDate(d.getDate() + days);
+      var expires = "expires=" + d.toGMTString();
+      document.cookie = cname + "=" + cvalue + ";" + expires;
+      window.close(); 
+    }
+  </script>
+</head>
+<body>
+  <div class="popup-card">
+    <div class="popup-title">머니플래너 커뮤니티 알림</div>
+    <div class="popup-content">
+      다같이 매너있게 즐겨요!<br>
+      <div class="popup-warning">비매너, 욕설 등은 경고 3번 시 영구 삭제됩니다 🚫</div>
+      서로를 배려해주시면<br>모두가 더 즐거운 서비스를 이용할 수 있습니다.
+    </div>
+    <div class="form-check mb-2">
+      <input class="form-check-input" type="checkbox" id="nopopup">
+      <label class="form-check-label" for="nopopup">7일간 보이지 않기</label>
+    </div>
+    <button class="btn btn-primary btn-close-popup" id="btnClose" type="button">닫기</button>
+  </div>
+  <!-- Bootstrap JS (팝업에는 필수는 아니지만 추가 가능) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

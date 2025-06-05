@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>머니플래너</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/community.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+</head>
+<body>
+  <%- include('nav.ejs', { session: session }) %>
+  <div class="container my-5" style="box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);">
+    <div class="bg-white p-4 shadow-md flex items-center justify-between">
+      <!-- 중앙 정렬용 부모 박스 -->
+      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <h1 class="text-xl font-semibold text-center" style="font-size: 32px; color: #388E3C; margin: 10px 0 30px 0;">
+          소비커뮤니티
+        </h1>
+    </div>
+
+
+    <!-- 메뉴 탭 -->
+    <ul class="nav nav-tabs mb-4" id="communityTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link <%= activeTab === 'all' ? 'active' : '' %>" 
+          id="all-tab" 
+          type="button" 
+          role="tab"
+          onclick="location.href='?category=all'"
+        >전체게시글</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link <%= activeTab === 'diary' ? 'active' : '' %>" 
+          id="diary-tab" 
+          type="button" 
+          role="tab"
+          onclick="location.href='?category=diary'"
+        >나만의소비팁</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link <%= activeTab === 'free' ? 'active' : '' %>" 
+          id="free-tab" 
+          type="button" 
+          role="tab"
+          onclick="location.href='?category=free'"
+        >자유게시판</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link <%= activeTab === 'goal' ? 'active' : '' %>" 
+          id="goal-tab" 
+          type="button" 
+          role="tab"
+          onclick="location.href='?category=goal'"
+        >목표 인증</button>
+      </li>
+    </ul>
+
+    <!-- 검색창 + 글작성 버튼 (전체게시글 탭에서만 보임) -->
+    <div class="d-flex justify-content-between align-items-center mb-3" id="searchBar" style="<%= activeTab === 'all' ? 'display:flex;' : 'display:none;' %>">
+      <form class="input-group w-75" method="GET" action="/money/post">
+        <input type="hidden" name="category" value="all" />
+        <input
+          type="text"
+          name="keyword"
+          value="<%= keyword || '' %>"
+          class="form-control"
+          placeholder="검색어를 입력하세요"
+          aria-label="검색어"
+        />
+        <select class="form-select" name="search_option" style="max-width: 150px;">
+          <option value="all" <%= search_option === 'all' ? 'selected' : '' %>>전체</option>
+          <option value="writer" <%= search_option === 'writer' ? 'selected' : '' %>>작성자</option>
+          <option value="title" <%= search_option === 'title' ? 'selected' : '' %>>제목</option>
+          <option value="content" <%= search_option === 'content' ? 'selected' : '' %>>내용</option>
+        </select>
+        <button class="btn btn-outline-success" type="submit">검색</button>
+      </form>
+      <button class="btn btn-success" onclick="location.href='/money/post/form'">글 작성</button>
+    </div>
+
+    <div class="tab-content">
+      <!-- 전체게시글 -->
+      <div class="tab-pane fade <%= activeTab === 'all' ? 'show active' : '' %>" id="all" role="tabpanel">
+        <div class="border p-4 bg-white rounded shadow-sm">
+          <table class="table table-bordered table-striped text-center align-middle mb-0">
+            <thead class="table-yellow">
+              <tr>
+                <th>번호</th>
+                <th>작성자</th>
+                <th>제목</th>
+                <th>날짜</th>
+                <th>조회수</th>
+                <th>첨부파일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(items && items.length > 0) { %>
+                <% items.forEach(function(item, index) { %>
+                  <tr>
+                    <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
+                    <td><%= item.writer %></td>
+                    <td>
+                      <a href="/money/post/communitydetail/<%=item.post_id%>"><%= item.title %></a>
+                      <% if(item.cnt > 0) { %>
+                        <span class="badge bg-success ms-1"><%= item.cnt %></span>
+                      <% } %>
+                    </td>
+                    <td><%= item.post_date %></td>
+                    <td><%= item.hit %></td>
+                    <td>
+                      <% if(item.filesize > 0) { %>
+                        <a href="/money/post/download/<%= item.post_id %>">
+                          <img src="/images/file_small.png" width="30" height="30" alt="첨부파일" />
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr><td colspan="6">게시글이 없습니다.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+
+          <!-- 페이지네이션 -->
+          <nav aria-label="페이지 이동" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <% if(i === currentPage) { %>
+                  <li class="page-item active"><span class="page-link"><%= i %></span></li>
+                <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link" href="/money/post/page/<%= i %>?category=all<%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %><%= search_option ? '&search_option=' + search_option : '' %>"><%= i %></a>
+                  </li>
+                <% } %>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div> <!-- 여기까지 전체게시글 탭 닫힘 -->
+
+      <!-- 소비일기 탭 -->
+      <div class="tab-pane fade <%= activeTab === 'diary' ? 'show active' : '' %>" id="diary" role="tabpanel">
+        <div class="border p-4 bg-white rounded shadow-sm">
+          <% if(diaryItems && diaryItems.length > 0) { %>
+            <table class="table table-bordered table-striped text-center align-middle mb-0">
+              <thead class="table-yellow">
+                <tr>
+                  <th>번호</th>
+                  <th>작성자</th>
+                  <th>제목</th>
+                  <th>날짜</th>
+                  <th>조회수</th>
+                  <th>첨부파일</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% diaryItems.forEach(function(item, index) { %>
+                  <tr>
+                    <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
+                    <td><%= item.writer %></td>
+                    <td>
+                      <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
+                      <% if(item.cnt > 0) { %>
+                        <span class="badge bg-success ms-1"><%= item.cnt %></span>
+                      <% } %>
+                    </td>
+                    <td><%= item.post_date %></td>
+                    <td><%= item.hit %></td>
+                    <td>
+                      <% if(item.filesize > 0) { %>
+                        <a href="/money/post/download/<%= item.post_id %>">
+                          <img src="/images/file_small.png" width="30" height="30" alt="첨부파일" />
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p class="text-center my-4">소비일기 게시글이 없습니다.</p>
+          <% } %>
+          <!-- 페이지네이션 -->
+          <nav aria-label="페이지 이동" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <% if(i === currentPage) { %>
+                  <li class="page-item active"><span class="page-link"><%= i %></span></li>
+                <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link" href="/money/post/page/<%= i %>?category=diary<%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %><%= search_option ? '&search_option=' + search_option : '' %>"><%= i %></a>
+                  </li>
+                <% } %>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+
+      <!-- 자유게시판 탭 -->
+      <div class="tab-pane fade <%= activeTab === 'free' ? 'show active' : '' %>" id="free" role="tabpanel">
+        <div class="border p-4 bg-white rounded shadow-sm">
+          <% if(freeItems && freeItems.length > 0) { %>
+            <table class="table table-bordered table-striped text-center align-middle mb-0">
+              <thead class="table-yellow">
+                <tr>
+                  <th>번호</th>
+                  <th>작성자</th>
+                  <th>제목</th>
+                  <th>날짜</th>
+                  <th>조회수</th>
+                  <th>첨부파일</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% freeItems.forEach(function(item, index) { %>
+                  <tr>
+                    <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
+                    <td><%= item.writer %></td>
+                    <td>
+                      <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
+                      <% if(item.cnt > 0) { %>
+                        <span class="badge bg-success ms-1"><%= item.cnt %></span>
+                      <% } %>
+                    </td>
+                    <td><%= item.post_date %></td>
+                    <td><%= item.hit %></td>
+                    <td>
+                      <% if(item.filesize > 0) { %>
+                        <a href="/money/post/download/<%= item.post_id %>">
+                          <img src="/images/file_small.png" width="30" height="30" alt="첨부파일" />
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p class="text-center my-4">자유게시판 게시글이 없습니다.</p>
+          <% } %>
+          <!-- 페이지네이션 -->
+          <nav aria-label="페이지 이동" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <% if(i === currentPage) { %>
+                  <li class="page-item active"><span class="page-link"><%= i %></span></li>
+                <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link" href="/money/post/page/<%= i %>?category=free<%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %><%= search_option ? '&search_option=' + search_option : '' %>"><%= i %></a>
+                  </li>
+                <% } %>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- 목표인증 탭 -->
+      <div class="tab-pane fade <%= activeTab === 'goal' ? 'show active' : '' %>" id="goal" role="tabpanel">
+        <div class="border p-4 bg-white rounded shadow-sm">
+          <% if(goalItems && goalItems.length > 0) { %>
+            <table class="table table-bordered table-striped text-center align-middle mb-0">
+              <thead class="table-yellow">
+                <tr>
+                  <th>번호</th>
+                  <th>작성자</th>
+                  <th>제목</th>
+                  <th>날짜</th>
+                  <th>조회수</th>
+                  <th>첨부파일</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% goalItems.forEach(function(item, index) { %>
+                  <tr>
+                    <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
+                    <td><%= item.writer %></td>
+                    <td>
+                      <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
+                      <% if(item.cnt > 0) { %>
+                        <span class="badge bg-success ms-1"><%= item.cnt %></span>
+                      <% } %>
+                    </td>
+                    <td><%= item.post_date %></td>
+                    <td><%= item.hit %></td>
+                    <td>
+                      <% if(item.filesize > 0) { %>
+                        <a href="/money/post/download/<%= item.post_id %>">
+                          <img src="/images/file_small.png" width="30" height="30" alt="첨부파일" />
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          <% } else { %>
+            <p class="text-center my-4">목표 인증 게시글이 없습니다.</p>
+          <% } %>
+          <!-- 페이지네이션 -->
+          <nav aria-label="페이지 이동" class="mt-3">
+            <ul class="pagination justify-content-center">
+              <% for(let i = 1; i <= totalPages; i++) { %>
+                <% if(i === currentPage) { %>
+                  <li class="page-item active"><span class="page-link"><%= i %></span></li>
+                <% } else { %>
+                  <li class="page-item">
+                    <a class="page-link" href="/money/post/page/<%= i %>?category=goal<%= keyword ? '&keyword=' + encodeURIComponent(keyword) : '' %><%= search_option ? '&search_option=' + search_option : '' %>"><%= i %></a>
+                  </li>
+                <% } %>
+              <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

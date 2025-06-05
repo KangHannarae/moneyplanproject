@@ -1,0 +1,54 @@
+1. select 일기 내용 있는 것들 전부다
+2. select 일기 내용, select 그 인덱스에 있는 댓글들
+3. insert 댓글
+4. delete 댓글
+5. update 댓글
+
+// 머니유저 테이블
+
+create table money_user(
+userid varchar(20) primary key,
+pwd char(64) not null,
+username varchar(20) not null,
+fav_card1 varchar(20) not null,
+fav_card2 varchar(20),
+fav_card3 varchar(20), 
+goal_money int,
+join_date datetime default current_timestamp,
+user_type enum('admin', 'user') default 'user'
+);
+
+// 관리자 레코드 추가
+insert into money_user (userid, pwd, username, fav_card1, user_type) values ('admin', SHA2('1234', 256), '관리자', '없음', 'admin');
+// 실습용 일반 사용자 레코드 추가
+insert into money_user (userid, pwd, username, fav_card1, fav_card2, fav_card3, goal_money) values ('guy', SHA2('1234', 256), '가희', '우리카드', '삼성카드', '롯데카드', 150);
+
+//가계부 내역 관리테이블
+create table money_contents(
+idx int primary key auto_increment,
+writer varchar(20),
+date datetime,
+in_out enum('수입', '지출'),
+price int,
+contents varchar(50),
+category varchar(50),
+payby varchar(20),
+diary text,
+diary_img varchar(500),
+hit int default 0,
+constraint fk_writer foreign key (writer) references money_user(userid)
+);
+
+// 샘플 데이터 추가
+insert into
+
+// 댓글 관리테이블
+create table money_comment(
+com_idx int primary key auto_increment,
+orig_idx int not null,
+com_writer varchar(20) not null,
+orig_writer varchar(20) not null,
+comment text not null,
+comm_date datetime default current_timestamp,
+constraint fk_idx foreign key (orig_idx) references money_contents(idx)
+);

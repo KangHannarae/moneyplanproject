@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>머니플래너</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/moneydetail.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <script>
+    function del(idx){
+      if(confirm("삭제?")){
+        location.href="/money/contentsBye/" + idx;
+      }
+    }
+  </script>
+</head>
+<body>
+  <%- include('nav.ejs', { session: session }) %>
+
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2><%= item.in_out === '지출' ? '지출 기록 상세보기' : '수입 기록 상세보기' %></h2>
+
+      <form action="/money/contentsUpdate/<%= item.idx %>" method="post" enctype="multipart/form-data">
+        <table>
+          <tr>
+            <td>사용자</td>
+            <td><%= item.writer %></td>
+          </tr>
+          <tr>
+            <td>사용일자</td>
+            <td>
+              <input type="date" name="date" placeholder="사용일자" value="<%= item.date %>" />
+            </td>
+          </tr>
+          <tr>
+            <td>수입/지출</td>
+            <td><%= item.in_out %></td>
+          </tr>
+          <tr>
+            <td>금액</td>
+            <td><input type="text" name="price" value="<%= item.price %>" placeholder="금액"></td>
+          </tr>
+          <tr>
+            <td>사용처</td>
+            <td><input type="text" name="contents" value="<%= item.contents %>" placeholder="사용처"></td>
+          </tr>
+          <tr>
+            <td>카테고리</td>
+            <td><input type="text" name="category" value="<%= item.category %>" placeholder="카테고리"></td>
+          </tr>
+          <tr>
+            <td>결제수단</td>
+            <td>
+              <input type="hidden" name="payby" id="payby" value="<%= item.payby %>" readonly>
+              <select name="paycard" id="paybyselect">
+                <% for(var i=0; i<my_card.length; i++) { %>
+                  <option value="<%= my_card[i] %>" <% if(my_card[i] === item.payby){ %>selected<% } %>>
+                    <%= my_card[i] %>
+                  </option>
+                <% } %>
+                <option value="현금" <% if(item.payby === '현금'){ %>selected<% } %>>현금</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>소비메모</td>
+            <td><input type="text" name="diary" value="<%= item.diary %>" placeholder="소비메모"></td>
+          </tr>
+          <% if(item.diary_img !== '-') { %>
+            <tr>
+              <td>첨부 이미지</td>
+              <td><img src="/images/<%= item.diary_img %>" width="100px" height="100px"></td>
+            </tr>
+          <% } %>
+          <tr>
+            <td>이미지 업로드</td>
+            <td>
+              <input type="file" name="filename">
+              <input type="hidden" name="old_filename" value="<%= item.diary_img %>">
+              <input type="hidden" name="idx" value="<%= item.idx %>">
+            </td>
+          </tr>
+        </table>
+        <div class="container text-center">
+            <div class="row">
+                <div class="col">
+                    <button type="submit">확인</button>
+                    <button type="button" class="delete-btn" onclick="del('<%= item.idx %>')">삭제</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="back-btn" onclick="location.href='/money/moneylist'">목록</button>
+                    <button type="button" class="back-btn" onclick="location.href='/money/diarylist'">메모목록</button>
+                </div>
+            </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('paybyselect').addEventListener('change', function() {
+      document.getElementById('payby').value = this.value;
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

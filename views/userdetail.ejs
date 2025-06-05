@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>머니플래너</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/moneydetail.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/userdetail.css">
+  <script>
+    function del_user(userid) {
+      if (confirm('사용자 정보를 정말 삭제하시겠습니까?')) {
+        location.href = '/money/userBye/' + userid;
+      }
+    }
+
+    function warn_user(userid) {
+      if (confirm('이 사용자에게 경고를 주겠습니까?')) {
+        fetch('/money/userWarn/' + userid)
+          .then(() => {
+            alert("경고가 정삭적으로 부여되었습니다.");
+            location.href = '/money/userlist';
+          });
+      }
+    }
+
+    function userRenew() {
+      document.form1.action = "/money/userRenew/<%= user.userid %>";
+      document.form1.submit();
+    }
+  </script>
+</head>
+
+<body>
+  <%- include('nav.ejs', { session: session }) %>
+
+  <div class="container-wrapper">
+    <div class="form-container">
+      <h2>회원정보 상세 / 수정</h2>
+
+      <form name="form1" method="post">
+        <table>
+          <tr>
+            <td>회원 이름</td>
+            <td><%= user.username %></td>
+          </tr>
+          <tr>
+            <td>아이디</td>
+            <td>
+              <input type="hidden" name="idforuser" id="idforuser" value="<%= user.userid %>">
+              <%= user.userid %>
+            </td>
+          </tr>
+          <tr>
+            <td>자주 사용하는 카드1</td>
+            <td><input type="text" name="fav_card1" value="<%= user.fav_card1 %>"></td>
+          </tr>
+          <tr>
+            <td>자주 사용하는 카드2</td>
+            <td><input type="text" name="fav_card2" value="<%= user.fav_card2 %>"></td>
+          </tr>
+          <tr>
+            <td>자주 사용하는 카드3</td>
+            <td><input type="text" name="fav_card3" value="<%= user.fav_card3 %>"></td>
+          </tr>
+          <tr>
+            <td>한달 목표 사용 금액(만원)</td>
+            <td><input type="text" name="goal_money" value="<%= user.goal_money %>"></td>
+          </tr>
+          <tr>
+            <td>가입일자</td>
+            <td><%= user.join_date %></td>
+          </tr>
+          <tr>
+            <td>경고횟수</td>
+            <td><%= user.warn %></td>
+          </tr>
+          <tr>
+            <td>회원 메모</td>
+            <td><input type="text" name="log" value="<%= user.log %>"></td>
+          </tr>
+        </table>
+
+        <div class="btn-group">
+          <button type="button" class="btn-custom" onclick="userRenew()">수정</button>
+          <button type="button" class="btn-warning btn-custom" onclick="warn_user('<%= user.userid %>')">경고</button>
+          <button type="button" class="btn-danger btn-custom" onclick="del_user('<%= user.userid %>')">삭제</button>
+          <button type="button" class="btn-custom" onclick="location.href='/money/goback';">뒤로</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

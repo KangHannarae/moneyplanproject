@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>머니플래너</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/stylesheets/mydetail.css">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+    <script>
+        function del_user(userid) {
+            if (confirm('탈퇴 시 작성하신 모든 내역과 게시글은 삭제되며, 이는 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?')) {
+                location.href = '/money/userBye/' + userid;
+            }
+        }
+
+        function userRenew() {
+            alert('수정되었습니다.');
+            document.form1.action = "/money/userRenew/<%= user.userid %>";
+            document.form1.submit();
+        }
+
+        function pwchange() {
+            let idforuser = document.getElementById("idforuser").value;
+            let pwd = document.getElementById("pwd").value;
+            fetch("/money/changePwd?idforuser=" + idforuser + "&pwd=" + pwd)
+                .then(() => {
+                    alert("비밀번호가 변경되었습니다.");
+                });
+        }
+    </script>
+</head>
+
+<body>
+    <%- include('nav.ejs', { session: session }) %>
+
+    <div class="list-wrapper">
+        <div class="list-container">
+            <h2>내 정보 수정</h2>
+
+            <form name="form1" method="post">
+                <table>
+                    <tr>
+                        <td>회원 이름</td>
+                        <td><%= user.username %></td>
+                    </tr>
+                    <tr>
+                        <td>아이디</td>
+                        <td>
+                            <input type="hidden" name="idforuser" id="idforuser" value="<%= user.userid %>">
+                            <%= user.userid %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>비밀번호</td>
+                        <td>
+                            <input type="password" id="pwd" placeholder="변경할 비밀번호" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" title="영문자와 숫자를 혼합하여 8자 이상 입력하세요.">
+                        </td>
+                        <td>
+                            <button type="button" class="btn-yellow" onclick="pwchange()">비밀번호 변경</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>자주 사용하는 카드1</td>
+                        <td colspan="2"><input type="text" name="fav_card1" value="<%= user.fav_card1 %>"></td>
+                    </tr>
+                    <tr>
+                        <td>자주 사용하는 카드2</td>
+                        <td colspan="2"><input type="text" name="fav_card2" value="<%= user.fav_card2 %>"></td>
+                    </tr>
+                    <tr>
+                        <td>자주 사용하는 카드3</td>
+                        <td colspan="2"><input type="text" name="fav_card3" value="<%= user.fav_card3 %>"></td>
+                    </tr>
+                    <tr>
+                        <td>한달 목표 사용 금액(만원)</td>
+                        <td colspan="2"><input type="text" name="goal_money" value="<%= user.goal_money %>"></td>
+                    </tr>
+                    <tr>
+                        <td>가입일자</td>
+                        <td colspan="2"><%= user.join_date %></td>
+                    </tr>
+                    <tr>
+                        <td>경고횟수</td>
+                        <td colspan="2"><%= user.warn %></td>
+                    </tr>
+                </table>
+
+                <div class="button-group">
+                    <button type="button" class="btn-green" onclick="userRenew()">수정</button>
+                    <button type="button" class="btn-yellow" onclick="del_user('<%= user.userid %>')">회원 탈퇴</button>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='/money/goback';">뒤로</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

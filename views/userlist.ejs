@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/userlist.css">
+  <title>머니플래너</title>
+  <script>
+    function del_user(userid) {
+      if (confirm(`${userid} 계정을 삭제하시겠습니까?`)) {
+        fetch('/money/userBye/' + userid)
+          .then(() => {
+            alert("사용자가 정삭적으로 삭제되었습니다.");
+            location.reload();
+          });
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <%- include('nav.ejs', { session: session }) %>
+
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2>회원 목록 (관리자 전용)</h2>
+      <table>
+        <tr>
+          <th>아이디</th>
+          <th>이름</th>
+          <th>한 달 목표금액</th>
+          <th>가입일자</th>
+          <th>경고</th>
+          <th>삭제</th>
+        </tr>
+        <% users.forEach(user=> { %>
+          <tr>
+            <td>
+              <%= user.userid %>
+              <input type="hidden" name="userid" value="<%= user.userid %>" />
+            </td>
+            <td>
+              <a href="/money/userdetail/<%= user.userid %>"><%= user.username %></a>
+            </td>
+            <td><%= user.goal_money %></td>
+            <td><%= user.join_date %></td>
+            <td style="<%= user.warn >=3 ? 'color:red; font-weight:bold;':''%>"><%= user.warn %></td>
+            <td>
+              <input type="hidden" name="userid" value="<%= user.userid %>" />
+              <button type="button" class="delete-btn" onclick="del_user('<%= user.userid %>')">삭제</button>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

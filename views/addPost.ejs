@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>머니플래너</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/addPost.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+</head>
+<body>
+  <%- include('nav.ejs') %>
+
+  <div class="container-custom">
+    <div class="card-custom">
+      <h2>글 작성</h2>
+      <form method="post" action="/money/post/insert" enctype="multipart/form-data" novalidate>
+        <!-- 로그인한 유저를 writer로 넘김 -->
+        <input type="hidden" name="writer" value="<%= session.userid %>">
+
+        <!-- 게시판 종류 선택 -->
+        <div class="mb-3">
+          <label for="category" class="form-label">게시판 선택</label>
+          <select class="form-select" id="category" name="category" required>
+            <option value="">-- 게시판을 선택하세요 --</option>
+            <option value="diary">나만의소비팁</option>
+            <option value="free">자유게시판</option>
+            <option value="goal">목표 인증</option>
+          </select>
+          <div class="invalid-feedback">게시판을 선택해주세요.</div>
+        </div>
+
+        <!-- 제목 입력 -->
+        <div class="mb-3">
+          <label for="title" class="form-label">제목</label>
+          <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요" required />
+          <div class="invalid-feedback">제목을 입력해주세요.</div>
+        </div>
+
+        <!-- 내용 입력 -->
+        <div class="mb-3">
+          <label for="content" class="form-label">내용</label>
+          <textarea class="form-control" name="content" id="content" rows="8" placeholder="내용을 입력하세요" required></textarea>
+          <div class="invalid-feedback">내용을 입력해주세요.</div>
+        </div>
+
+        <!-- 파일 첨부 -->
+        <div class="mb-3">
+          <label for="file" class="form-label">파일 첨부 (선택)</label>
+          <input class="form-control" type="file" id="file" name="file" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt" />
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-primary">등록</button>
+          <a href="/money/post" class="btn btn-secondary">취소</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

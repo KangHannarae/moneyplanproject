@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>머니플래너</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/moneylist.css">
+  <script>
+    function del_contents(idx) {
+      if (confirm('해당 내역을 삭제하시겠습니까?')) {
+        fetch('/money/contentsBye/' + idx)
+          .then(() => {
+            alert("내역이 정삭적으로 삭제되었습니다.");
+
+            location.href="/money/moneylist";
+          });
+      }
+    }
+
+    function getCookie(name) {
+    var cookie = document.cookie + ";";
+    console.log(cookie);
+    var idx = cookie.indexOf(name, 0);
+    var val = "";
+    if (idx != -1) {
+        console.log(idx + "," + cookie.length);
+        cookie = cookie.substring(idx, cookie.length);
+        begin = cookie.indexOf("=", 0) + 1;
+        end = cookie.indexOf(";", begin);
+        console.log(begin + "," + end);
+        val = cookie.substring(begin, end);
+      }
+      return val;
+    }
+
+    window.onload = function() {
+      if (getCookie("showCookies") !== "N") {
+        window.open("/money/popup", "popup", "width=420,height=380,left=300,top=200");
+      }
+      document.getElementById('date').value = new Date().toISOString().substring(0, 10);
+      var msg = "<%= msg %>";
+      if (msg === "success") {
+        alert("내역이 정상적으로 추가되었습니다!");
+      }
+    }
+  </script>
+</head>
+<body>    
+  <%- include('nav.ejs', { session: session }) %>
+  <script>
+
+  </script>
+  <div class="list-wrapper">
+    <div class="list-container">
+      <h2><%= user.username %> 님의 수입/지출 기록</h2>
+
+      <div class="grid text-center">
+        <div>이번 달 총 수입금액</div>
+        <div class="income"><%= parseInt(total_in).toLocaleString() %>원</div>
+        <div>이번 달 총 소비금액</div>
+        <div class="expense"><%= parseInt(total_out).toLocaleString() %>원</div>
+        <div>이번 달 예산까지 남은 금액</div>
+        <div class="expense"><%= (user.goal_money * 10000 - parseInt(total_out)).toLocaleString() %>원</div>
+      </div>
+
+      <form id="form1" action="/money/moneylist" method="get">
+        <select name="year" required>
+          <% for (let y = 2020; y <= new Date().getFullYear(); y++) { %>
+            <option value="<%= y %>" <%=(y == year) ? 'selected' : '' %>><%= y %>년</option>
+          <% } %>
+        </select>
+
+        <select name="month" required>
+          <% for (let m = 1; m <= 12; m++) {
+              const mm = m.toString().padStart(2, '0'); %>
+            <option value="<%= mm %>" <%=(mm == month) ? 'selected' : '' %>><%= mm %>월</option>
+          <% } %>
+        </select>
+
+        <button type="submit">조회</button>
+      </form>
+
+      <form id="form_new" action="/money/contentsNew" method="post">
+        <input type="date" name="date" id="date" placeholder="사용일자" required />
+        <select name="in_out">
+          <option value="지출" selected>지출</option>
+          <option value="수입">수입</option>
+        </select>
+        <input type="text" name="price" placeholder="금액" required />
+        <input type="text" name="contents" placeholder="사용처" required />
+        <input type="text" name="category" placeholder="카테고리" required />
+        
+        <!-- 카드 불러오는중... -->
+        <select name="payby" id="payby">
+          <% for(i=0;i<my_card.length;i++){%>
+            <option value="<%= my_card[i] %>">
+              <%= my_card[i] %>
+            </option>
+          <% } %>
+          <option>현금</option>
+          </select>
+        <button type="submit">내역 추가</button>
+      </form>
+
+      <table>
+        <tr>
+          <th>사용일자</th>
+          <th>수입/지출</th>
+          <th>금액</th>
+          <th>사용처</th>
+          <th>카테고리</th>
+          <th>결제수단</th>
+          <th>삭제</th>
+        </tr>
+        <% contents.forEach(function(content) {
+             const rowClass = content.in_out === '지출' ? 'expense' : 'income'; %>
+          <tr>
+            <td><%= content.date %></td>
+            <td class="<%= rowClass %>"><%= content.in_out %></td>
+            <td><%= content.price.toLocaleString() %>원</td>
+            <td><a href="/money/moneydetail/<%= content.idx %>"><%= content.contents %></a></td>
+            <td><%= content.category %></td>
+            <td><%= content.payby %></td>
+            <td><button type="button" class="delete-btn" onclick="del_contents('<%= content.idx %>')">삭제</button></td>
+          </tr>
+        <% }) %>
+      </table>
+      <% const now = new Date(); %>
+      <% const nowmonth = now.getMonth()+1; %>
+      <% if( month == nowmonth  ){ %>
+      <div class="grid text-center">
+        <% if(my_card[0] !== '' && my_card[0] !== null && my_card[0] !== undefined){%>
+          <div><%= my_card[0] %> 예상결제금액</div>
+          <div class="expense"><%= parseInt(sum_card1).toLocaleString() %>원</div>
+        <%}%>
+        <% if(my_card[1] !== '' && my_card[1] !== null && my_card[1] !== undefined){%>
+          <div><%= my_card[1] %> 예상결제금액</div>
+          <div class="expense"><%= parseInt(sum_card2).toLocaleString() %>원</div>
+        <%}%>
+        <% if(my_card[2] !== '' && my_card[2] !== null && my_card[2] !== undefined){%>
+          <div><%= my_card[2] %> 예상결제금액</div>
+          <div class="expense"><%= parseInt(sum_card3).toLocaleString() %>원</div>
+        <%}%>
+      </div>
+      <% } %>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+    body {
+      background-color: #fffde7;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .list-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .list-container {
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #388e3c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background-color: #fdd835;
+      color: #333;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fffde7;
+    }
+
+    tr:hover {
+      background-color: #f0f4c3;
+    }
+
+    a.post-link {
+      text-decoration: none;
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    a.post-link:hover {
+      text-decoration: underline;
+    }
+
+    .date {
+      color: #777;
+      font-size: 0.9em;
+    }
