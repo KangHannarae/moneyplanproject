@@ -1,4 +1,7 @@
 import app from "../app.js";
 
-app.listen(3000);
-console.log('서비스가 시작되었습니다.');
+const port = process.env.PORT || 3000; 
+
+app.listen(port, () => {
+  console.log(`서비스가 시작되었습니다. 포트: ${port}`);
+});
