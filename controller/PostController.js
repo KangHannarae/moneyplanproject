@@ -107,8 +107,7 @@ export const download = async (req, res) => {
   try {
     const filename = await getFilenameById(post_id);
     if (!filename || filename === '-') return res.status(404).send("No file associated with this entry.");
-
-    const file = path.join("public", "upload", filename);
+    const file = path.join(__dirname, "public", "upload", filename);
     await fs.access(file);
 
     const originalFilename = filename.includes('-') ? filename.substring(filename.indexOf('-') + 1) : filename;
@@ -162,8 +161,8 @@ export const updatePost = (req, res) => {
         filesize = req.file.size;
       } else if (old_filename && old_filename !== '-') {
         filename = old_filename;
-        try {
-          const stat = await fs.stat(path.join("public", "upload", filename));
+        try { 
+          const stat = await fs.stat(path.join(__dirname, "public", "upload", filename));
           filesize = stat.size;
         } catch {
           filesize = 0;
