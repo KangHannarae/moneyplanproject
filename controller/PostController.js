@@ -13,7 +13,7 @@ import { getRepliesByCommentId } from "../model/ReplyDAO.js";
 // 업로드 설정 
 const storage = multer.diskStorage({
   destination(req, file, done) {
-    done(null, path.join("public", "upload"));
+    done(null, path.join(__dirname, "public", "upload"));
   },
   filename(req, file, done) {
     const uniqueName = Date.now() + '-' + Buffer.from(file.originalname, 'latin1').toString('utf-8');
