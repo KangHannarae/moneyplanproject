@@ -4,6 +4,12 @@ import path from "path";
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const uploadDir = path.join(__dirname, "public", "upload");
+import fsSync from "fs"; // fs/promises 말고 동기 방식도 함께 사용
+
+if (!fsSync.existsSync(uploadDir)) {
+  fsSync.mkdirSync(uploadDir, { recursive: true });
+}
 
 import {
   getPostListFromDB, insertPostToDB, getFilenameById, incrementDownloadCount,
