@@ -1,6 +1,8 @@
 import multer from "multer";
 import fs from "fs/promises";
 import path from "path";
+import { fileURLToPath } from 'url';
+
 import {
   getPostListFromDB, insertPostToDB, getFilenameById, incrementDownloadCount,
   incrementHitCount, getPostById, getCommentsByPostId,
@@ -13,7 +15,7 @@ import { getRepliesByCommentId } from "../model/ReplyDAO.js";
 // 업로드 설정 
 const storage = multer.diskStorage({
   destination(req, file, done) {
-    done(null, "c:/money_upload_file");
+    done(null, path.join(__dirname, "public", "upload"));
   },
   filename(req, file, done) {
     const uniqueName = Date.now() + '-' + Buffer.from(file.originalname, 'latin1').toString('utf-8');
@@ -107,8 +109,7 @@ export const download = async (req, res) => {
   try {
     const filename = await getFilenameById(post_id);
     if (!filename || filename === '-') return res.status(404).send("No file associated with this entry.");
-
-    const file = path.join("c:/money_upload_file", filename);
+    const file = path.join(__dirname, "public", "upload", filename);
     await fs.access(file);
 
     const originalFilename = filename.includes('-') ? filename.substring(filename.indexOf('-') + 1) : filename;
@@ -162,8 +163,8 @@ export const updatePost = (req, res) => {
         filesize = req.file.size;
       } else if (old_filename && old_filename !== '-') {
         filename = old_filename;
-        try {
-          const stat = await fs.stat("c:/money_upload_file/" + filename);
+        try { 
+          const stat = await fs.stat(path.join(__dirname, "public", "upload", filename));
           filesize = stat.size;
         } catch {
           filesize = 0;
