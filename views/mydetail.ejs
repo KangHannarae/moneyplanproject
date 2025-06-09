@@ -5,6 +5,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="/stylesheets/mydetail.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+    <style type="text/css">
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+        }
+    </style>
     <script>
         function del_user(userid) {
             if (confirm('탈퇴 시 작성하신 모든 내역과 게시글은 삭제되며, 이는 되돌릴 수 없습니다. 정말 탈퇴하시겠습니까?')) {
@@ -13,9 +20,14 @@
         }
 
         function userRenew() {
-            alert('수정되었습니다.');
-            document.form1.action = "/money/userRenew/<%= user.userid %>";
-            document.form1.submit();
+            let gmoney = parseInt(document.getElementById("goal_money").value);
+            if(gmoney < 0 || gmoney > 210000000){
+                alert('1~21,000,000 사이의 숫자를 입력해주세요.');
+            }else{
+                alert('수정되었습니다.');
+                document.form1.action = "/money/userRenew/<%= user.userid %>";
+                document.form1.submit();
+            }
         }
 
         function pwchange() {
@@ -60,7 +72,7 @@
                     </tr>
                     <tr>
                         <td>자주 사용하는 카드1</td>
-                        <td colspan="2"><input type="text" name="fav_card1" value="<%= user.fav_card1 %>"></td>
+                        <td colspan="2"><input type="text" name="fav_card1" value="<%= user.fav_card1 %>" autofocus></td>
                     </tr>
                     <tr>
                         <td>자주 사용하는 카드2</td>
@@ -72,7 +84,7 @@
                     </tr>
                     <tr>
                         <td>한달 목표 사용 금액(만원)</td>
-                        <td colspan="2"><input type="text" name="goal_money" value="<%= user.goal_money %>"></td>
+                        <td colspan="2"><input type="number" name="goal_money" id="goal_money" value="<%= user.goal_money %>"></td>
                     </tr>
                     <tr>
                         <td>가입일자</td>

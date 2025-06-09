@@ -1,0 +1,11 @@
+비밀번호 찾기 입력폼
+views/ resetPassword.ejs
+
+메일계정정보 및 메일 송신 (nodemailer 이용)
+utils/ mailer.js
+
+비밀번호 찾기 관련 로직 수행
+routes/ auth.js
+
+임시비밀번호 생성 및 디비 저장
+RandomPwdController.js

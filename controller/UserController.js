@@ -1,3 +1,6 @@
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import db from '../model/db.js';
 import { insertUser, selectLogin, deleteUser, selectUserAll, selectUserId, updateUser, updatePwd, warnUser } from '../model/UserDAO.js';
 import { deleteContents } from '../model/ContentsDAO.js';
 
@@ -26,20 +29,44 @@ export const getLogin = (req, res) => {
 
 // 로그인 정보 찾는 쿼리, session 생성
 export const postLogin = async (req, res) => {
-    const { userid, pwd } = req.body;
-    const user = await selectLogin (userid, pwd);
-    if (user) {
-        req.session.user_type = user.user_type;
-        req.session.userid = user.userid;
-        req.session.username = user.username;
-        if (req.session.user_type === 'admin') {
-            res.redirect('/money/adminPage');
-        } else {
-            res.redirect('/money/main');
-        }        
+  const { userid, pwd } = req.body;
+
+  // 1. 사용자 조회 (pwd는 해시 그대로 가져옴)
+  const [rows] = await db.execute('SELECT * FROM money_user WHERE userid = ?', [userid]);
+  const user = rows[0];
+
+  if (!user) {
+    return res.redirect('/money/login?msg=fail');
+  }
+
+  const storedPwd = user.pwd;
+
+  let isMatch = false;
+
+  // 2. bcrypt 해시인지 판별 (bcrypt 해시는 보통 $2b$, $2a$ 로 시작)
+  if (storedPwd.startsWith('$2b$') || storedPwd.startsWith('$2a$')) {
+    // bcrypt 해시 비교
+    isMatch = await bcrypt.compare(pwd, storedPwd);
+  } else {
+    // 기존 SHA2(256) 비교
+    const sha256Pwd = crypto.createHash('sha256').update(pwd).digest('hex');
+    isMatch = (sha256Pwd === storedPwd);
+  }
+
+  if (isMatch) {
+    // 로그인 성공 시 세션 설정
+    req.session.user_type = user.user_type;
+    req.session.userid = user.userid;
+    req.session.username = user.username;
+
+    if (req.session.user_type === 'admin') {
+      res.redirect('/money/adminPage');
     } else {
-        res.redirect('/money/login?msg=fail');
+      res.redirect('/money/main');
     }
+  } else {
+    res.redirect('/money/login?msg=fail');
+  }
 };
    
 // 로그아웃 - 세션 파괴

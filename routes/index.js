@@ -22,7 +22,7 @@ import {
   deleteReply
 } from "../controller/PostController.js";
 
-import { getMainPage, getMyPage, getAdminPage } from "../controller/PageController.js";
+import { getMainPage, getMyPage, getAdminPage, getResetPassword } from "../controller/PageController.js";
 
 import {
   addFavorite,
@@ -43,6 +43,8 @@ import {
 } from "../controller/ReplyController.js";
 
 import { AllPostList, AdminPostDelete_one } from "../controller/adminController.js";
+
+import { resetPassword } from "../controller/RandomPwdController.js";
 
 const router = Router();
 
@@ -96,7 +98,7 @@ router.get("/post/comment_reply_delete/:reply_id/:post_id", deleteCommentReply) 
 //마이페이지 추가 기능 
 router.get("/user_favlist/:userid", getMyFavs); //즐겨찾기 목록 조회
 router.get("/user_postlist/:userid", getMyPosts); //작성 게시글 목록 조회
-router.get("/user_commentlist/:username", getMyComments); //작성 댓글 목록 조회 
+router.get("/user_commentlist/:userid", getMyComments); //작성 댓글 목록 조회 
 
 //관리자 게시판 관리
 router.get("/adminPostPage", AllPostList); //게시글 관리 페이지
@@ -107,9 +109,12 @@ router.get("/popup", (req, res) => {
   res.render("popup"); // popup.ejs
 });
 
+//비밀번호 찾기(임시비밀번호 설정)
+router.post("/auth/reset-password", resetPassword);
+
 //페이지 이동
 router.get("/main", getMainPage); //메인페이지
 router.get("/mypage", getMyPage); //마이페이지
 router.get("/adminPage", getAdminPage); //관리자 페이지
-
+router.get("/resetPwd", getResetPassword); //비밀번호 찾기 (테스트)
 export default router;

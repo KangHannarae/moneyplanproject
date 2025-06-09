@@ -7,10 +7,10 @@ export const insertUser = async (userid, pwd, username, fav_card1, fav_card2, fa
 };
 
 // 로그인
-export const selectLogin = async (userid, pwd) => {
-    const sql = "select * from money_user where userid = ? and pwd = SHA2(?,256)";
-    const [rows] = await db.execute (sql, [userid, pwd]);
-    return rows[0];
+export const selectLogin = async (userid) => {
+  const sql = "select * from money_user where userid = ?";
+  const [rows] = await db.execute(sql, [userid]);
+  return rows[0];
 };
 
 // 사용자 삭제 (관리자, 일반 사용자 쿼리 동일)

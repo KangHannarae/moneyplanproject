@@ -14,8 +14,8 @@
     function goPostList(userid) {
       location.href = "/money/user_postlist/" + userid;
     }
-    function goCommentList(username) {
-      location.href = "/money/user_commentlist/" + username;
+    function goCommentList(userid) {
+      location.href = "/money/user_commentlist/" + userid;
     }
     function goMyUpdate(userid) {
       location.href = "/money/userdetail/" + userid;
@@ -35,7 +35,7 @@
       <button class="btn-custom" onclick="goPostList('<%= session.userid %>')">
         <span class="btn-icon">📝</span> 작성 게시글 목록
       </button>
-      <button class="btn-custom" onclick="goCommentList('<%= session.username %>')">
+      <button class="btn-custom" onclick="goCommentList('<%= session.userid %>')">
         <span class="btn-icon">💬</span> 작성 댓글 목록
       </button>
       <button class="btn-custom" onclick="goMyUpdate('<%= session.userid %>')">

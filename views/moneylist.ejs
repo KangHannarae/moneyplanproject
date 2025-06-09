@@ -5,6 +5,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
   <link rel="stylesheet" type="text/css" href="/stylesheets/moneylist.css">
+<style type="text/css">
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+</style>
   <script>
     function del_contents(idx) {
       if (confirm('해당 내역을 삭제하시겠습니까?')) {
@@ -86,7 +93,8 @@
           <option value="지출" selected>지출</option>
           <option value="수입">수입</option>
         </select>
-        <input type="text" name="price" placeholder="금액" required />
+
+        <input type="number" name="price"  min='1' max='210000000' step="1" placeholder="금액" autofocus required />
         <input type="text" name="contents" placeholder="사용처" required />
         <input type="text" name="category" placeholder="카테고리" required />
         

@@ -19,7 +19,6 @@
         </h1>
     </div>
 
-
     <!-- 메뉴 탭 -->
     <ul class="nav nav-tabs mb-4" id="communityTabs" role="tablist">
       <li class="nav-item" role="presentation">
@@ -103,9 +102,13 @@
                 <% items.forEach(function(item, index) { %>
                   <tr>
                     <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
-                    <td><%= item.writer %></td>
+                    <% if(item.writer==='admin') { %>
+                        <td style="color:red;"><%= item.writer %></td>
+                    <% } else { %>
+                        <td><%= item.writer %></td>
+                    <% } %>
                     <td>
-                      <a href="/money/post/communitydetail/<%=item.post_id%>"><%= item.title %></a>
+                        <a href="/money/post/communitydetail/<%=item.post_id%>"><%= item.title %></a>
                       <% if(item.cnt > 0) { %>
                         <span class="badge bg-success ms-1"><%= item.cnt %></span>
                       <% } %>
@@ -163,7 +166,11 @@
                 <% diaryItems.forEach(function(item, index) { %>
                   <tr>
                     <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
-                    <td><%= item.writer %></td>
+                    <% if(item.writer==='admin') { %>
+                        <td style="color:red;"><%= item.writer %></td>
+                    <% } else { %>
+                        <td><%= item.writer %></td>
+                    <% } %>
                     <td>
                       <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
                       <% if(item.cnt > 0) { %>
@@ -223,7 +230,11 @@
                 <% freeItems.forEach(function(item, index) { %>
                   <tr>
                     <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
-                    <td><%= item.writer %></td>
+                    <% if(item.writer==='admin') { %>
+                        <td style="color:red;"><%= item.writer %></td>
+                    <% } else { %>
+                        <td><%= item.writer %></td>
+                    <% } %>
                     <td>
                       <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
                       <% if(item.cnt > 0) { %>
@@ -282,7 +293,11 @@
                 <% goalItems.forEach(function(item, index) { %>
                   <tr>
                     <td><%= (currentPage - 1) * pageSize + index + 1 %></td>
-                    <td><%= item.writer %></td>
+                    <% if(item.writer==='admin') { %>
+                        <td style="color:red;"><%= item.writer %></td>
+                    <% } else { %>
+                        <td><%= item.writer %></td>
+                    <% } %>
                     <td>
                       <a href="/money/post/communitydetail/<%= item.post_id %>"><%= item.title %></a>
                       <% if(item.cnt > 0) { %>

@@ -16,7 +16,7 @@ export const getMyPosts = async (req, res) => {
 
 //작성한 댓글 목록 가져오기
 export const getMyComments = async (req, res) => {
-  const { username } = req.params;
-  const mycomments = await selectMyCommentDB(username);
+  const { userid } = req.params;
+  const mycomments = await selectMyCommentDB(userid);
   res.render("myCommentList", { comments: mycomments });
 };

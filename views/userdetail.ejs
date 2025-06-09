@@ -50,26 +50,29 @@
               <%= user.userid %>
             </td>
           </tr>
+          <% if( user.userid != 'admin'){ %>
           <tr>
             <td>자주 사용하는 카드1</td>
-            <td><input type="text" name="fav_card1" value="<%= user.fav_card1 %>"></td>
+            <td><%= user.fav_card1 %></td>
           </tr>
           <tr>
             <td>자주 사용하는 카드2</td>
-            <td><input type="text" name="fav_card2" value="<%= user.fav_card2 %>"></td>
+            <td><%= user.fav_card2 %></td>
           </tr>
           <tr>
             <td>자주 사용하는 카드3</td>
-            <td><input type="text" name="fav_card3" value="<%= user.fav_card3 %>"></td>
+            <td><%= user.fav_card3 %></td>
           </tr>
           <tr>
             <td>한달 목표 사용 금액(만원)</td>
-            <td><input type="text" name="goal_money" value="<%= user.goal_money %>"></td>
+            <td><%= user.goal_money %></td>
           </tr>
+          <% } %>
           <tr>
             <td>가입일자</td>
             <td><%= user.join_date %></td>
           </tr>
+          <% if( user.userid != 'admin'){ %>
           <tr>
             <td>경고횟수</td>
             <td><%= user.warn %></td>
@@ -78,12 +81,15 @@
             <td>회원 메모</td>
             <td><input type="text" name="log" value="<%= user.log %>"></td>
           </tr>
+          <% } %>
         </table>
 
         <div class="btn-group">
+          <% if( user.userid != 'admin'){ %>
           <button type="button" class="btn-custom" onclick="userRenew()">수정</button>
           <button type="button" class="btn-warning btn-custom" onclick="warn_user('<%= user.userid %>')">경고</button>
           <button type="button" class="btn-danger btn-custom" onclick="del_user('<%= user.userid %>')">삭제</button>
+          <% } %>
           <button type="button" class="btn-custom" onclick="location.href='/money/goback';">뒤로</button>
         </div>
       </form>

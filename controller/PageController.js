@@ -10,3 +10,7 @@ export const getMyPage = (req, res) => {
 export const getAdminPage = (req, res) => {
   res.render("adminPage");
 };
+
+export const getResetPassword = (req, res) => {
+  res.render("resetPassword");
+};

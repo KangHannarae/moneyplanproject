@@ -1,0 +1,28 @@
+기존 코드 (UserController.js)
+
+// export const postLogin = async (req, res) => {
+//     const { userid, pwd } = req.body;
+//     const user = await selectLogin (userid, pwd);
+//     if (user) {
+//         req.session.user_type = user.user_type;
+//         req.session.userid = user.userid;
+//         req.session.username = user.username;
+//         if (req.session.user_type === 'admin') {
+//             res.redirect('/money/adminPage');
+//         } else {
+//             res.redirect('/money/main');
+//         }        
+//     } else {
+//         res.redirect('/money/login?msg=fail');
+//     }
+// };
+
+-------------------------------
+UserDAO.js
+
+// 로그인
+// export const selectLogin = async (userid, pwd) => {
+//     const sql = "select * from money_user where userid = ? and pwd = SHA2(?,256)";
+//     const [rows] = await db.execute (sql, [userid, pwd]);
+//     return rows[0];
+// };

@@ -53,6 +53,7 @@ export const getPostListFromDB = async (limit, offset, category = 'all', keyword
   return { total, rows };
 };
 
+// 게시글 추가
 export const insertPostToDB = async ({ writer, category, title, content, filename, filesize }) => {
   await db.query(
     "INSERT INTO post (writer, category, title, content, post_date, filename, filesize) VALUES (?, ?, ?, ?, NOW(), ?, ?)",
@@ -60,19 +61,23 @@ export const insertPostToDB = async ({ writer, category, title, content, filenam
   );
 };
 
+//파일이름 조회
 export const getFilenameById = async (post_id) => {
   const [result] = await db.query("SELECT filename FROM post WHERE post_id=?", [post_id]);
   return result[0]?.filename || null;
 };
 
+//다운로드 횟수 증가
 export const incrementDownloadCount = async (post_id) => {
   await db.query("UPDATE post SET down = down + 1 WHERE post_id=?", [post_id]);
 };
 
+//조회수 증가
 export const incrementHitCount = async (post_id) => {
   await db.query("UPDATE post SET hit=hit+1 WHERE post_id=?", [post_id]);
 };
 
+//글번호로 게시글 조회
 export const getPostById = async (post_id) => {
   const [result] = await db.query(`
     SELECT post_id, writer, category, title, content, DATE_FORMAT(post_date, '%Y-%m-%d') as post_date,
@@ -82,15 +87,25 @@ export const getPostById = async (post_id) => {
   return result[0];
 };
 
+//글번호로 댓글 셀렉 + 댓글 작성자가 member_user테이블에 없을 시, isValidUser값 0으로 처리(LEFT JOIN)
 export const getCommentsByPostId = async (post_id) => {
   const [comments] = await db.query(`
-    SELECT comment_id, post_id, writer, content, DATE_FORMAT(comment_date, '%Y-%m-%d') as comment_date
-    FROM post_comment 
-    WHERE post_id=? 
-    ORDER BY post_id`, [post_id]);
+    SELECT 
+      c.comment_id, 
+      c.post_id, 
+      c.writer, 
+      c.content, 
+      DATE_FORMAT(c.comment_date, '%Y-%m-%d') AS comment_date,
+      IF(m.userid IS NULL, 0, 1) AS isValidUser
+    FROM post_comment c
+    LEFT JOIN money_user m ON c.writer = m.userid
+    WHERE c.post_id = ?
+    ORDER BY c.post_id
+  `, [post_id]);
   return comments;
 };
 
+//게시글 업데이트
 export const updatePostToDB = async ({ post_id, writer, category, title, content, filename, filesize }) => {
   await db.query(
     "UPDATE post SET writer=?, category=?, title=?, content=?, filename=?, filesize=? WHERE post_id=?",
@@ -98,6 +113,7 @@ export const updatePostToDB = async ({ post_id, writer, category, title, content
   );
 };
 
+//게시글 삭제
 export const deletePostById = async (post_id) => {
   const [result] = await db.query("DELETE FROM post WHERE post_id=?", [post_id]);
   return result.affectedRows === 1;

@@ -10,10 +10,18 @@
   </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
     <ul class="navbar-nav">
+      <% if(session.userid == 'admin') { %>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check5()">회원관리</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check6()">게시물관리</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check3()">커뮤니티</a></li>
+      <li class="nav-item"><a class="nav-link" href="#" onclick="check4()">마이페이지</a></li>
+      <% } else { %>
       <li class="nav-item"><a class="nav-link" href="#" onclick="check1()">가계부</a></li>
       <li class="nav-item"><a class="nav-link" href="#" onclick="check2()">소비메모</a></li>
       <li class="nav-item"><a class="nav-link" href="#" onclick="check3()">커뮤니티</a></li>
       <li class="nav-item"><a class="nav-link" href="#" onclick="check4()">마이페이지</a></li>
+      <% } %>
+      
       <% if(session.userid && session.userid !== "") { %>
         <li class="nav-item">
           <a class="nav-link" href="#" onclick="logout()">
@@ -58,10 +66,18 @@
   }
   function check4() { //마이페이지
     if(scriptNickname !== ""){ 
-      location.href='/money/mypage %>';
+      location.href='/money/mypage';
     } else { 
       alert("로그인이 필요한 서비스입니다.");
     }		
+  }
+  function check5() { //회원 내역
+      location.href='/money/userlist';
+  }
+  function check6() { //게시물 내역
+     
+      location.href='/money/adminPostPage';
+
   }
   function login() {
     location.href='/money/login';

@@ -161,7 +161,7 @@
       <div class="mb-2">
         <textarea name="content" class="form-control" rows="4" placeholder="댓글을 작성하세요"></textarea>
       </div>
-      <input type="hidden" name="writer" value="<%=session.username%>" />
+      <input type="hidden" name="writer" value="<%=session.userid%>" />
       <input type="hidden" name="post_id" value="<%=row.post_id%>" />
       <button type="submit" class="btn btn-outline-success" <%= !session.userid ? 'disabled' : '' %>>
         댓글쓰기
@@ -173,11 +173,18 @@
       <% comment_list.forEach(comment => { %>
         <div class="list-group-item">
           <div class="d-flex justify-content-between align-items-center">
-            <strong><%= comment.writer %></strong>
+            <% if(comment.writer === '관리자') {%>
+              <strong style="color:red;"><%= comment.writer %></strong>
+            <% } else if(comment.isValidUser === 0) { %>
+              <strong class="text-muted">(탈퇴한 사용자)</strong>
+            <% } else { %>
+              <strong><%= comment.writer %></strong>
+            <% } %>
+           
             <span class="text-muted small"><%= comment.comment_date %></span>
           </div>
 
-          <% if(session.username === comment.writer || session.userid === 'admin') { %>
+          <% if(session.userid === comment.writer || session.userid === 'admin') { %>
             <form method="post" action="/money/post/reply_update/<%=comment.comment_id%>" class="mt-2">
               <input type="text" class="form-control my-2" name="content" value="<%=comment.content%>">
               <input type="hidden" name="writer" value="<%=comment.writer%>">
@@ -202,7 +209,7 @@
             <div class="card card-body bg-light mt-2">
               <form method="post" action="/money/post/comment_reply_insert">
                 <input type="hidden" name="comment_id" value="<%= comment.comment_id %>">
-                <input type="hidden" name="writer" value="<%= session.username %>">
+                <input type="hidden" name="writer" value="<%= session.userid %>">
                 <input type="hidden" name="post_id" value="<%= row.post_id %>">
                 <textarea name="content" class="form-control" rows="3" placeholder="답글을 작성하세요"></textarea>
                 <button type="submit" class="btn btn-outline-success btn-sm mt-2" <%= !session.userid ? 'disabled' : '' %>>답글쓰기</button>
@@ -217,16 +224,22 @@
               <div class="border rounded p-2 mb-2 bg-light">
                 <div class="mb-1 d-flex justify-content-between">
                   <div>
-                    <strong><%= reply.writer %></strong>
+                    <% if(reply.writer === '관리자') { %>
+                      <strong style="color:red;"><%= reply.writer %></strong>
+                    <% } else if (reply.isValidUser === 0) { %>
+                      <strong class="text-muted">(탈퇴한 사용자)</strong>
+                    <% } else { %>
+                      <strong><%= reply.writer %></strong>
+                    <% } %>
                     <span class="text-muted small ms-2"><%= reply.reply_date %></span>
                   </div>
                 </div>
-                <% if (session.username === reply.writer) { %>
+                <% if (session.userid === reply.writer) { %>
                   <form method="post" action="/money/post/comment_reply_update" class="mt-1">
                     <input type="hidden" name="reply_id" value="<%= reply.reply_id %>">
                     <input type="hidden" name="comment_id" value="<%= comment.comment_id %>">
                     <input type="hidden" name="post_id" value="<%= row.post_id %>">
-                    <input type="hidden" name="writer" value="<%= session.username %>">
+                    <input type="hidden" name="writer" value="<%= session.userid %>">
 
                     <div class="input-group input-group-sm mb-2">
                       <input type="text" name="content" class="form-control" value="<%= reply.content %>">

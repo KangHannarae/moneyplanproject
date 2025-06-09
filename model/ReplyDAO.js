@@ -1,9 +1,19 @@
 import db from './db.js';
 
-// 답글 리스트
+// 답글 리스트 (답글 테이블 writer가 money_user테이블에 미존재할 시 isValidUser값 0)
 export const getRepliesByCommentId = async (comment_id) => {
   const [rows] = await db.query(
-    `SELECT reply_id, comment_id, writer, content, date_format(reply_date, '%Y-%m-%d')reply_date FROM comment_reply WHERE comment_id = ? ORDER BY reply_date ASC`,
+    `SELECT 
+        r.reply_id, 
+        r.comment_id, 
+        r.writer, 
+        r.content, 
+        DATE_FORMAT(r.reply_date, '%Y-%m-%d') AS reply_date,
+        IF(m.userid IS NULL, 0, 1) AS isValidUser
+     FROM comment_reply r
+     LEFT JOIN money_user m ON r.writer = m.userid
+     WHERE r.comment_id = ?
+     ORDER BY r.reply_date ASC`,
     [comment_id]
   );
   return rows;

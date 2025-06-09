@@ -18,13 +18,13 @@ export const selectMyPostDB = async (userid) => {
 };
 
 //작성한 댓글 목록 조회
-export const selectMyCommentDB = async (username) => {
+export const selectMyCommentDB = async (userid) => {
   const [mycomments] = await db.query(`
     SELECT pc.*, p.title 
     FROM post_comment pc 
     JOIN post p ON pc.post_id = p.post_id 
     WHERE pc.writer = ?
-  `, [username]);
+  `, [userid]);
   return mycomments;
 };
 
